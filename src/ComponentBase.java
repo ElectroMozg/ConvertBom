@@ -10,7 +10,6 @@ import java.io.InputStream;
 
 public class ComponentBase {
 
-
     static class footprint{
         String name;
         String typePad;
