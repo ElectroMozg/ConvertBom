@@ -4,86 +4,120 @@ import java.io.*;
 import java.util.Scanner;
 import org.apache.poi.ss.usermodel.*;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
 public class ComponentBase {
-
-    static class footprint{
-        String name;
-        String typePad;
-        int numPad;
-
-        footprint(String setName,String setTypePad, int setNumPad){
-            name = setName;
-            typePad = setTypePad;
-            numPad  =   setNumPad;
-        }
-    }
-
     InputStream inp;
     static Workbook tableFile;
-    Sheet tableSheet;
-    static String nameTableFile;
-    static int numLastRow;
-    static int numCellNameFootprint = 0;
-    static int numCellTypePad = 1;
-    static int numCellNumPad = 2;
+    static String nameFile;
 
-    public ComponentBase(String nameExlFile)throws  IOException
-    {
-        nameTableFile   =   nameExlFile;
-        inp         = new FileInputStream(nameTableFile);
-        tableFile   = WorkbookFactory.create(inp);
-        tableSheet  = tableFile.getSheetAt(0);
-        numLastRow  = tableSheet.getLastRowNum();
+    Sheet sheet;
+    int numLastRow;
+    int numCellValue = 0;
+    int numCellType = 1;
+
+
+    public ComponentBase(String nameExlFile) throws IOException {
+        nameFile = nameExlFile;
+        inp = new FileInputStream(nameFile);
+        tableFile = WorkbookFactory.create(inp);
+        sheet = tableFile.getSheetAt(0);
+        numLastRow = sheet.getLastRowNum();
     }
 
-    boolean findPackage(String namePackage){
 
-        for(int i=0;i<tableSheet.getLastRowNum();i++){
-            if(tableSheet.getRow(i).getCell(numCellNameFootprint).toString().equals(namePackage)){
-                return true;
+    static class footprint {
+        Sheet sheet;
+        int numRow;
+        int numCellName;
+        int numCellTypePad;
+        int numCellAmountPad;
+
+        footprint() {
+            sheet = tableFile.getSheetAt(1);
+            numRow = sheet.getLastRowNum();
+            numCellName = 0;
+            numCellTypePad = 1;
+            numCellAmountPad = 2;
+
+        }
+
+        void newFootprint(String setName, String setTypePad, int setNumPad) throws IOException {
+            sheet.createRow(++numRow);
+            sheet.getRow(numRow).createCell(numCellName).setCellValue(setName);
+            sheet.getRow(numRow).createCell(numCellTypePad).setCellValue(setTypePad);
+            sheet.getRow(numRow).createCell(numCellAmountPad).setCellValue(setNumPad);
+
+            FileOutputStream fileOut = new FileOutputStream(nameFile);
+            tableFile.write(fileOut);
+        }
+
+        boolean findFootprint(String nameFootprint) {
+            for (int i = 0; i < sheet.getLastRowNum(); i++) {
+                if (sheet.getRow(i).getCell(numCellName).toString().equals(nameFootprint)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        String getSolderType(String nameFootprint) {
+
+            String SolderType = null;
+            for (int i = 0; i < sheet.getLastRowNum(); i++) {
+                if (sheet.getRow(i).getCell(numCellName).toString().equals(nameFootprint)) {
+                    SolderType = sheet.getRow(i).getCell(numCellTypePad).toString();
+                }
+            }
+            return SolderType;
+        }
+
+        int getAmountPad(String nameFootprint) {
+            int AmountPad = 0;
+            for (int i = 0; i < sheet.getLastRowNum(); i++) {
+                if (sheet.getRow(i).getCell(numCellName).toString().equals(nameFootprint)) {
+                    AmountPad = (int) sheet.getRow(i).getCell(numCellAmountPad).getNumericCellValue();
+                }
+            }
+            return AmountPad;
+        }
+
+        void setSolderType(String nameFootprint, String SolderType) {
+            for (int i = 0; i < sheet.getLastRowNum(); i++) {
+                if (sheet.getRow(i).getCell(numCellName).toString().equals(nameFootprint)) {
+                    if (sheet.getRow(i).getCell(numCellTypePad) == null) {
+                        sheet.getRow(i).createCell(numCellTypePad);
+                    }
+                    sheet.getRow(i).getCell(numCellTypePad).setCellValue(SolderType);
+                }
             }
         }
-        return false;
-    }
 
-    footprint readFootprint(String name){
-        for(int i=0;i<tableSheet.getLastRowNum();i++){
-            if(tableSheet.getRow(i).getCell(numCellNameFootprint).toString().equals(name)){
-                String type     =   tableSheet.getRow(i).getCell(numCellTypePad).toString();
-                int    numPad   =   (int)tableSheet.getRow(i).getCell(numCellNumPad).getNumericCellValue();
-                return new footprint(name,type,numPad);
+        void setAmountPad(String nameFootprint, int amountPad) {
+            for (int i = 0; i < sheet.getLastRowNum(); i++) {
+                if (sheet.getRow(i).getCell(numCellName).toString().equals(nameFootprint)) {
+                    if (sheet.getRow(i).getCell(numCellAmountPad) == null) {
+                        sheet.getRow(i).createCell(numCellAmountPad);
+                    }
+                    sheet.getRow(i).getCell(numCellAmountPad).setCellValue(amountPad);
+                }
             }
         }
-        return null;
+
+        void enterFromTerminal() throws IOException {
+            Scanner in = new Scanner(System.in);
+            System.out.print("Ведите имя Footprint: ");
+            String name = in.nextLine();
+            System.out.print("Введите тип пайки: ");
+            String typeSolder = in.nextLine();
+            //TODO Надо добавить проверку ввода типа. Может быть только SMD или PTH
+            System.out.print("Введите количество контактов: ");
+            int amountPad = in.nextInt();
+            newFootprint(name, typeSolder, amountPad);
+        }
+
     }
 
-    void wrNewFootprint(footprint wrFootprint)throws FileNotFoundException, IOException{
-
-        tableSheet.createRow(++numLastRow);
-        tableSheet.getRow(numLastRow).createCell(numCellNameFootprint).setCellValue(wrFootprint.name);
-        tableSheet.getRow(numLastRow).createCell(numCellTypePad).setCellValue(wrFootprint.typePad);
-        tableSheet.getRow(numLastRow).createCell(numCellNumPad).setCellValue(wrFootprint.numPad);
-
-        FileOutputStream fileOut = new FileOutputStream(nameTableFile);
-        tableFile.write(fileOut);
-    }
-
-    footprint enterFootprint(){
-
-         Scanner in = new Scanner(System.in);
-         System.out.print("Ведите имя Footprint: ");
-         String name    =   in.nextLine();
-         System.out.print("Введите тип пайки: ");
-         String type =  in.nextLine();
-         //TODO Надо добавить проверку ввода типа. Может быть только SMD или PTH
-         System.out.print("Введите количество контактов: ");
-         int numPad = in.nextInt();
-
-         return new footprint(name,type,numPad);
-    }
 
 }
