@@ -7,11 +7,11 @@ public class Main {
 
 
     public static void main(String[] args) throws EncryptedDocumentException, IOException {
-        ComponentBase fpTable = new ComponentBase("Text.xlsx");
+        ComponentBase componentBase = new ComponentBase("Test.xlsx");
 
-        fpTable.findPackage("0603");
-        fpTable.findPackage("0605");
-        fpTable.findPackage("1206");
+        componentBase.footprint.enterFromTerminal();
+        //componentBase.enterFromTerminal();
+        System.out.println( "0R Type: " + componentBase.getType("0R"));
 
         //footprint wrFootprint   =   new footprint("1206","SMD",2);
         //fpTable.wrNewFootprint(fpTable.enterFootprint());

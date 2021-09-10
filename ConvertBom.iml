@@ -8,5 +8,8 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="poi-5.0.0" level="project" />
+    <orderEntry type="library" name="commons-compress-1.20" level="project" />
+    <orderEntry type="library" name="commons-codec-1.15" level="project" />
+    <orderEntry type="library" name="batik-all-1.13" level="project" />
   </component>
 </module>

@@ -1,40 +1,88 @@
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+
 import java.io.*;
 import java.util.Scanner;
 import org.apache.poi.ss.usermodel.*;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
+
 
 public class ComponentBase {
-    InputStream inp;
     static Workbook tableFile;
     static String nameFile;
 
     Sheet sheet;
+    Footprint footprint;
     int numLastRow;
     int numCellValue = 0;
     int numCellType = 1;
 
-
     public ComponentBase(String nameExlFile) throws IOException {
         nameFile = nameExlFile;
-        inp = new FileInputStream(nameFile);
-        tableFile = WorkbookFactory.create(inp);
+        tableFile = WorkbookFactory.create(new FileInputStream(nameFile));
+        footprint   =   new Footprint();
         sheet = tableFile.getSheetAt(0);
         numLastRow = sheet.getLastRowNum();
     }
 
+    void enterFromTerminal() throws IOException {
+        Scanner in = new Scanner(System.in);
+        System.out.print("Ведите значение компонента: ");
+        String value = in.nextLine();
+        System.out.print("Введите тип компонента: ");
+        String type = in.nextLine();
+        newComponent(value, type);
+    }
 
-    static class footprint {
+     boolean findValue(String value) {
+        for (int i = 0; i < sheet.getLastRowNum(); i++) {
+            if (sheet.getRow(i).getCell(numCellType).toString().equals(value)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    void newComponent(String value, String type) throws IOException {
+        sheet.createRow(++numLastRow);
+        sheet.getRow(numLastRow).createCell(numCellValue).setCellValue(value);
+        sheet.getRow(numLastRow).createCell(numCellType).setCellValue(type);
+
+        FileOutputStream fileOut = new FileOutputStream(nameFile);
+        tableFile.write(fileOut);
+    }
+
+    void setType(String value, String type) {
+        String readType;
+        for (int i = 0; i < sheet.getLastRowNum(); i++) {
+            if (sheet.getRow(i).getCell(numCellValue).toString().equals(value)) {
+                if (sheet.getRow(i).getCell(numCellType) == null) {
+                    sheet.getRow(i).createCell(numCellType);
+                }
+                sheet.getRow(i).getCell(numCellType).setCellValue(type);
+            }
+        }
+    }
+
+    String getType(String value){
+        String readType = null;
+        for (int i = 0; i < sheet.getLastRowNum(); i++) {
+            if (sheet.getRow(i).getCell(numCellValue).toString().equals(value)) {
+                readType = sheet.getRow(i).getCell(numCellType).toString();
+            }
+        }
+        return readType;
+    }
+
+    static class Footprint {
         Sheet sheet;
         int numRow;
         int numCellName;
         int numCellTypePad;
         int numCellAmountPad;
 
-        footprint() {
+        Footprint() {
             sheet = tableFile.getSheetAt(1);
             numRow = sheet.getLastRowNum();
             numCellName = 0;
@@ -109,11 +157,16 @@ public class ComponentBase {
             Scanner in = new Scanner(System.in);
             System.out.print("Ведите имя Footprint: ");
             String name = in.nextLine();
+            if(findFootprint(name)){
+                System.out.println("Footprint уже существует");
+                return;
+            }
             System.out.print("Введите тип пайки: ");
             String typeSolder = in.nextLine();
             //TODO Надо добавить проверку ввода типа. Может быть только SMD или PTH
             System.out.print("Введите количество контактов: ");
             int amountPad = in.nextInt();
+            System.out.println("Создан Footprint " + name +" "+ typeSolder + "количество контактов: "+ amountPad);
             newFootprint(name, typeSolder, amountPad);
         }
 
