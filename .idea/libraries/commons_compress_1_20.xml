@@ -1,9 +1,9 @@
 <component name="libraryTable">
   <library name="commons-compress-1.20">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../Lib/poi-5.0.0/ooxml-lib/commons-compress-1.20.jar!/" />
-      <root url="jar://$PROJECT_DIR$/../Lib/poi-5.0.0/ooxml-lib/curvesapi-1.06.jar!/" />
-      <root url="jar://$PROJECT_DIR$/../Lib/poi-5.0.0/ooxml-lib/xmlbeans-4.0.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/poi-5.0.0/ooxml-lib/commons-compress-1.20.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/poi-5.0.0/ooxml-lib/xmlbeans-4.0.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/poi-5.0.0/ooxml-lib/curvesapi-1.06.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
