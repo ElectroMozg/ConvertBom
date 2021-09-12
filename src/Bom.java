@@ -15,7 +15,7 @@ public class Bom {
     static String nameFile;
     int numLastRow;
     ComponentBase componentBase;
-    DataBom readComponent[];
+    DataBom[] readComponent;
 
     public Bom(String nameExlFile) throws FileNotFoundException, IOException {
         nameFile = nameExlFile;
@@ -27,7 +27,7 @@ public class Bom {
     }
 
     DataBom[] readAllComponents() throws IOException {
-        DataBom readComponent[] = new DataBom[numLastRow];
+        DataBom[] readComponent = new DataBom[numLastRow];
 
         for (int i = 0; i < numLastRow - 1; i++) {
             //Прочитать Строку
@@ -61,6 +61,39 @@ public class Bom {
             readComponent[i].numValue = convertValue(readComponent[i].value, readComponent[i].type);
         }
         return readComponent;
+    }
+
+    DataBom[] sortByType(DataBom[] dataBom) {
+        DataBom[] sortBom = new DataBom[dataBom.length];
+        String[] tableType = new String[6];
+        tableType[0] = "Resistor";
+        tableType[1] = "Capacitor";
+        tableType[2] = "Microchip";
+        tableType[3] = "Diode";
+        tableType[4] = "Transistor";
+        tableType[5] = "Other";
+        int countSortBom = 0;
+        for (int i = 0; i < tableType.length; i++) {
+            for (int j = 0; j < dataBom.length; j++) {
+                if (dataBom[j].type == tableType[i]) {
+                    sortBom[countSortBom] = dataBom[j];
+                    countSortBom++;
+                }
+            }
+
+        }
+        return sortBom;
+    }
+
+    DataBom[] sortByFootprint(DataBom[] dataBom) {
+        DataBom[] sortBom = new DataBom[dataBom.length];
+
+        for (int i = 0; i < dataBom.length; i++) {
+            if(dataBom[i].type.equals("Resistor");
+        }
+
+
+        return sortBom;
     }
 
     double convertValue(String value, String type) {
