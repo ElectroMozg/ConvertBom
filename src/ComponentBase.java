@@ -5,6 +5,7 @@ import java.io.*;
 import java.util.Scanner;
 
 import org.apache.poi.ss.usermodel.*;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 
@@ -22,7 +23,7 @@ public class ComponentBase {
     public ComponentBase(String nameExlFile) throws IOException {
         nameFile = nameExlFile;
         tableFile = WorkbookFactory.create(new FileInputStream(nameFile));
-        footprint   =   new Footprint();
+        footprint = new Footprint();
         sheet = tableFile.getSheetAt(0);
         numLastRow = sheet.getLastRowNum();
     }
@@ -36,9 +37,10 @@ public class ComponentBase {
         newComponent(value, type);
     }
 
-     boolean findValue(String value) {
-        for (int i = 0; i < sheet.getLastRowNum(); i++) {
-            if (sheet.getRow(i).getCell(numCellType).toString().equals(value)) {
+    boolean findValue(String value) {
+        for (int i = 0; i < sheet.getLastRowNum()+1; i++) {
+            String baseValue = sheet.getRow(i).getCell(numCellValue).toString();
+            if (baseValue.equals(value)) {
                 return true;
             }
         }
@@ -56,6 +58,7 @@ public class ComponentBase {
 
     void setType(String value, String type) {
         String readType;
+
         for (int i = 0; i < sheet.getLastRowNum(); i++) {
             if (sheet.getRow(i).getCell(numCellValue).toString().equals(value)) {
                 if (sheet.getRow(i).getCell(numCellType) == null) {
@@ -66,14 +69,23 @@ public class ComponentBase {
         }
     }
 
-    String getType(String value){
-        String readType = null;
-        for (int i = 0; i < sheet.getLastRowNum(); i++) {
+    String getType(String value) throws IOException {
+
+        if (!findValue(value)) {
+            do {
+                System.out.println("Неизвестное значение" + value);
+                System.out.println("Необходимо внести значение в базу");
+                enterFromTerminal();
+            }
+            while (!findValue(value));
+        }
+        for (int i = 0; i < sheet.getLastRowNum() + 1; i++) {
             if (sheet.getRow(i).getCell(numCellValue).toString().equals(value)) {
-                readType = sheet.getRow(i).getCell(numCellType).toString();
+                String readType = sheet.getRow(i).getCell(numCellType).toString();
+                return readType;
             }
         }
-        return readType;
+        return null;
     }
 
     static class Footprint {
@@ -103,15 +115,25 @@ public class ComponentBase {
         }
 
         boolean findFootprint(String nameFootprint) {
-            for (int i = 0; i < sheet.getLastRowNum(); i++) {
-                if (sheet.getRow(i).getCell(numCellName).toString().equals(nameFootprint)) {
+            for (int i = 0; i < sheet.getLastRowNum() + 1; i++) {
+                String readFootprint = sheet.getRow(i).getCell(numCellName).toString();
+                if (readFootprint.equals(nameFootprint)) {
                     return true;
                 }
             }
             return false;
         }
 
-        String getSolderType(String nameFootprint) {
+        String getSolderType(String nameFootprint) throws IOException {
+
+            if (!findFootprint(nameFootprint)) {
+                do {
+                    System.out.println("getSolderType Неизвестный Footprint" + nameFootprint);
+                    System.out.println("Необходимо внести Footprint в базу");
+                    enterFromTerminal();
+                }
+                while (!findFootprint(nameFootprint));
+            }
 
             String SolderType = null;
             for (int i = 0; i < sheet.getLastRowNum(); i++) {
@@ -122,7 +144,17 @@ public class ComponentBase {
             return SolderType;
         }
 
-        int getAmountPad(String nameFootprint) {
+        int getAmountPad(String nameFootprint) throws IOException {
+
+            if (!findFootprint(nameFootprint)) {
+                do {
+                    System.out.println("getAmountPad Неизвестный Footprint " + nameFootprint);
+                    System.out.println("Необходимо внести Footprint в базу");
+                    enterFromTerminal();
+                }
+                while (!findFootprint(nameFootprint));
+            }
+
             int AmountPad = 0;
             for (int i = 0; i < sheet.getLastRowNum(); i++) {
                 if (sheet.getRow(i).getCell(numCellName).toString().equals(nameFootprint)) {
@@ -158,7 +190,7 @@ public class ComponentBase {
             Scanner in = new Scanner(System.in);
             System.out.print("Ведите имя Footprint: ");
             String name = in.nextLine();
-            if(findFootprint(name)){
+            if (findFootprint(name)) {
                 System.out.println("Footprint уже существует");
                 return;
             }
@@ -167,7 +199,7 @@ public class ComponentBase {
             //TODO Надо добавить проверку ввода типа. Может быть только SMD или PTH
             System.out.print("Введите количество контактов: ");
             int amountPad = in.nextInt();
-            System.out.println("Создан Footprint " + name +" "+ typeSolder + "количество контактов: "+ amountPad);
+            System.out.println("Создан Footprint " + name + " " + typeSolder + "количество контактов: " + amountPad);
             newFootprint(name, typeSolder, amountPad);
         }
 
