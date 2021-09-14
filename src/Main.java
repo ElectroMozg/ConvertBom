@@ -15,6 +15,8 @@ public class Main {
 
         bom.sortBom(bom.readComponent);
 
+       // bom.readComponent   = bom.contEqualsRows(bom.readComponent);
+
         bom.saveAllComponents("Sort_BOM.xlsx",bom.readComponent);
 
 

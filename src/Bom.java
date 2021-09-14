@@ -1,10 +1,8 @@
-import org.apache.poi.ss.usermodel.Row;
+
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
-
 import java.io.*;
-import java.util.ArrayList;
 
 public class Bom {
 
@@ -42,6 +40,10 @@ public class Bom {
         saveSheet = saveFile.getSheetAt(0);
 
         for (int i = 0; i < saveBom.length; i++) {
+
+            if(saveBom[i] == null){
+                break;
+            }
             if (saveSheet.getRow(i) == null) {
                 saveSheet.createRow(i);
             }
@@ -76,22 +78,6 @@ public class Bom {
     }
 
 
-
-
-
-    void sortByLayer(DataBom[] dataBom) {
-        boolean needIteration = true;
-        while (needIteration) {
-            needIteration = false;
-            for (int i = 1; i < dataBom.length; i++) {
-                if (dataBom[i].sortWeightLayer < dataBom[i - 1].sortWeightLayer) {
-                    swap(dataBom, i, i - 1);
-                    needIteration = true;
-                }
-            }
-        }
-    }
-
     void sortBom(DataBom[] dataBom) {
 
         boolean needIteration = true;
@@ -119,6 +105,24 @@ public class Bom {
                 }
             }
         }
+    }
+
+    DataBom[] contEqualsRows(DataBom[] readBom) {
+        DataBom[] contBom = new DataBom[readBom.length];
+
+        DataBom contRow;
+        for (int i = 0; i < readBom.length-1; i++) {
+
+            contRow =   readBom[i];
+            for (int j = 1; j < readBom.length-1; j++) {
+                if(contRow.value.equals(readBom[j].value)&&contRow.footprint.equals(readBom[j].footprint)){
+
+                    contRow.designator  =   contRow.designator + "," + readBom[j].designator;
+                }
+            }
+            contBom[i]=contRow;
+        }
+        return contBom;
     }
 
 

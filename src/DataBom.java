@@ -59,14 +59,9 @@ public class DataBom {
                     sortWeightValue = sortWeightValue + tentsDoubleValue;
 
                 }
-            } else if (value.contains("K")) {
-                sortWeightValue = Double.parseDouble(value.substring(0, value.indexOf("K")));
-                if (value.length() > value.indexOf("K")) {
-
-                    double tentsDoubleValue = Double.parseDouble(value.substring(value.indexOf("K") + 1)) / 10;
-                    sortWeightValue = (sortWeightValue + tentsDoubleValue) * 1000;
-
-                }
+            } else if (value.contains("k")) {
+                sortWeightValue = Double.parseDouble(value.substring(0, value.indexOf("k")));
+                //TODO не работает расчет
             } else if (value.contains("M")) {
                 sortWeightValue = Double.parseDouble(value.substring(0, value.indexOf("M")));
                 if (value.length() > value.indexOf("M")) {
@@ -76,6 +71,7 @@ public class DataBom {
 
                 }
             } else {
+                sortWeightValue =Double.parseDouble(value);
                 System.out.println("Неизвестный префикс резистора");
             }
         } else if (type.equals("Capacitor")) {
