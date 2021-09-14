@@ -96,8 +96,6 @@ public class DataBom {
             System.out.println("не ковертируемый тип данных"+type);
             sortWeightValue = 0;
         }
-
-
     }
 
     private void setSortWeightFootprint() {

@@ -21,6 +21,7 @@ public class ComponentBase {
     int numCellType = 1;
 
     public ComponentBase(String nameExlFile) throws IOException {
+
         nameFile = nameExlFile;
         tableFile = WorkbookFactory.create(new FileInputStream(nameFile));
         footprint = new Footprint();
@@ -29,16 +30,28 @@ public class ComponentBase {
     }
 
     void enterFromTerminal() throws IOException {
+
         Scanner in = new Scanner(System.in);
+
         System.out.print("Ведите значение компонента: ");
         String value = in.nextLine();
         System.out.print("Введите тип компонента: ");
-        String type = in.nextLine();
+
+        String[] tableType = new String[7];
+        tableType[0] = "Resistor";
+        tableType[1] = "Capacitor";
+        tableType[2] = "Microchip";
+        tableType[3] = "Diode";
+        tableType[4] = "Transistor";
+        tableType[5] = "Other";
+        tableType[6] = "No Type";
+
+        String type = selectFromArray(tableType,in);
         newComponent(value, type);
     }
 
     boolean findValue(String value) {
-        for (int i = 0; i < sheet.getLastRowNum()+1; i++) {
+        for (int i = 0; i < sheet.getLastRowNum() + 1; i++) {
             String baseValue = sheet.getRow(i).getCell(numCellValue).toString();
             if (baseValue.equals(value)) {
                 return true;
@@ -96,6 +109,7 @@ public class ComponentBase {
         int numCellAmountPad;
 
         Footprint() {
+
             sheet = tableFile.getSheetAt(1);
             numRow = sheet.getLastRowNum();
             numCellName = 0;
@@ -111,6 +125,7 @@ public class ComponentBase {
             sheet.getRow(numRow).createCell(numCellAmountPad).setCellValue(setNumPad);
 
             FileOutputStream fileOut = new FileOutputStream(nameFile);
+
             tableFile.write(fileOut);
         }
 
@@ -195,6 +210,11 @@ public class ComponentBase {
                 return;
             }
             System.out.print("Введите тип пайки: ");
+            String[] tableTypeSolder = new String[2];
+
+            tableTypeSolder[0]  =   "SMD";
+            tableTypeSolder[1]  =   "PTH";
+
             String typeSolder = in.nextLine();
             //TODO Надо добавить проверку ввода типа. Может быть только SMD или PTH
             System.out.print("Введите количество контактов: ");
@@ -205,5 +225,25 @@ public class ComponentBase {
 
     }
 
+    private String selectFromArray(String[] arrayOfChose,Scanner in) {
+
+        String outString = null;
+        while (outString == null) {
+            System.out.println("Выберите из списка");
+            for (int i = 0; i < arrayOfChose.length; i++) {
+                System.out.println(i + ": " + arrayOfChose[i]);
+            }
+            int readChose   =   in.nextInt();
+            for (int i = 0; i < arrayOfChose.length; i++) {
+
+                if (readChose == i) {
+                    outString = arrayOfChose[i];
+                    return outString;
+                }
+            }
+            System.out.println("Ошибка введите значение от 0 до " + arrayOfChose.length);
+        }
+        return outString;
+    }
 
 }

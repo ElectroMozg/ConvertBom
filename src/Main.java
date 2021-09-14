@@ -8,18 +8,20 @@ public class Main {
 
     public static void main(String[] args) throws EncryptedDocumentException, IOException {
 
+
         Bom bom =   new Bom("Test_BOM.xlsx");
 
         bom.readComponent   = bom.readAllComponents();
 
-        bom.sortByValue(bom.readComponent);
-        bom.sortByFootprint(bom.readComponent);
-        bom.sortByType(bom.readComponent);
-        bom.sortByLayer(bom.readComponent);
+        bom.sortBom(bom.readComponent);
+
+        bom.saveAllComponents("Sort_BOM.xlsx",bom.readComponent);
 
 
         System.out.println("End");
         System.out.println("ENd");
+
+
     }
 
 
