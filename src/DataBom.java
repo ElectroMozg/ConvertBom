@@ -23,8 +23,7 @@ public class DataBom {
     int sortWeightFootprint;
     int sortWeightType;
     int quantity;
-    public DataBom() {
-    }
+
 
 
     public DataBom(Sheet sheet, int numRow) throws IOException {
@@ -248,10 +247,10 @@ public class DataBom {
     }
 
     public void setSortWeightType() {
-        ArrayList<String> ListType = new ArrayList<String>();
+        ArrayList<String> ListType = new ArrayList<>();
         //Записанны в порядке очереди
-        ListType.add("Resistor");
         ListType.add("Capacitor");
+        ListType.add("Resistor");
         ListType.add("Transistor");
         ListType.add("LedDiode");
         ListType.add("Optocoupler");
