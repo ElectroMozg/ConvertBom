@@ -2,6 +2,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class DataBom {
 
@@ -21,7 +22,7 @@ public class DataBom {
     int sortWeightLayer;
     int sortWeightFootprint;
     int sortWeightType;
-
+    int quantity;
     public DataBom() {
     }
 
@@ -42,12 +43,12 @@ public class DataBom {
         type = componentBase.getType(value);
         solderType = componentBase.footprint.getSolderType(footprint);
         amountPad = componentBase.footprint.getAmountPad(footprint);
+        quantity = 1;
 
         setSortWeightValue();
         setSortWeightFootprint();
         setSortWeightType();
         setSortWeightLayer();
-
 
     }
 
@@ -247,20 +248,26 @@ public class DataBom {
     }
 
     public void setSortWeightType() {
-        String[] tableType = new String[7];
-        tableType[0] = "Resistor";
-        tableType[1] = "Capacitor";
-        tableType[2] = "Microchip";
-        tableType[3] = "Diode";
-        tableType[4] = "Transistor";
-        tableType[5] = "Other";
-        tableType[6] = "No Type";
+        ArrayList<String> ListType = new ArrayList<String>();
+        //Записанны в порядке очереди
+        ListType.add("Resistor");
+        ListType.add("Capacitor");
+        ListType.add("Transistor");
+        ListType.add("LedDiode");
+        ListType.add("Optocoupler");
+        ListType.add("Diode");
+        ListType.add("Microchip");
+        ListType.add("Relay");
+        ListType.add("Connectors");
+        ListType.add("Other");
+        ListType.add("Not install");
+        ListType.add("No type");
 
-
-        sortWeightType = tableType.length - 1;
-        for (int i = 0; i < tableType.length; i++) {
-            if (type.equals(tableType[i])) {
+        for (int i = 0; i < ListType.size(); i++) {
+            if (type.equals(ListType.get(i))) {
                 sortWeightType = i;
+            }else{
+                sortWeightType = ListType.indexOf("No type");
             }
         }
     }

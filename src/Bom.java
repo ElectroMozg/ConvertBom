@@ -2,7 +2,10 @@
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Bom {
 
@@ -41,7 +44,7 @@ public class Bom {
 
         for (int i = 0; i < saveBom.length; i++) {
 
-            if(saveBom[i] == null){
+            if (saveBom[i] == null) {
                 break;
             }
             if (saveSheet.getRow(i) == null) {
@@ -108,21 +111,25 @@ public class Bom {
     }
 
     DataBom[] contEqualsRows(DataBom[] readBom) {
-        DataBom[] contBom = new DataBom[readBom.length];
 
-        DataBom contRow;
-        for (int i = 0; i < readBom.length-1; i++) {
+        ArrayList<DataBom> listBom = new ArrayList<>(Arrays.asList(readBom));
 
-            contRow =   readBom[i];
-            for (int j = 1; j < readBom.length-1; j++) {
-                if(contRow.value.equals(readBom[j].value)&&contRow.footprint.equals(readBom[j].footprint)){
+        for (int i = 0; i < listBom.size(); i++) {
 
-                    contRow.designator  =   contRow.designator + "," + readBom[j].designator;
+            for (int j = i+1; j < listBom.size(); j++) {
+                if (listBom.get(i).value.equals(listBom.get(j).value) &&
+                        listBom.get(i).layer.equals(listBom.get(j).layer) &&
+                        listBom.get(i).footprint.equals(listBom.get(j).footprint)) {
+                    listBom.get(i).designator = listBom.get(i).designator +" , "+ listBom.get(j).designator;
+                    listBom.remove(j);
+                    listBom.get(i).quantity++;
+                    j--;
                 }
             }
-            contBom[i]=contRow;
+            System.out.println(listBom.get(i).designator +" "+ listBom.get(i).value);
         }
-        return contBom;
+        //TODO Разобраться почему такая запись[]::new
+        return listBom.toArray(DataBom[]::new);
     }
 
 
