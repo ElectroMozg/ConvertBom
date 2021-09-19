@@ -16,7 +16,7 @@ public class Bom {
 
     DataBom[] readComponent;
 
-    public Bom(String nameExlFile) throws FileNotFoundException, IOException {
+    public Bom(String nameExlFile) throws  IOException {
         nameFile = nameExlFile;
         file = WorkbookFactory.create(new FileInputStream(nameFile));
         sheet = file.getSheetAt(0);
@@ -36,7 +36,9 @@ public class Bom {
 
     }
 
-    void saveAllComponents(String nameExlFile, DataBom[] saveBom) throws FileNotFoundException, IOException {
+    void saveAllComponents(DataBom[] saveBom) throws IOException {
+
+        String nameExlFile ="Sort_BOM.xlsx";
 
         Workbook saveFile = WorkbookFactory.create(new FileInputStream(nameExlFile));
         Sheet saveSheet;
